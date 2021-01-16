@@ -18,8 +18,8 @@ public interface HTTPInvoker {
      */
     static HTTPInvoker authenticated(final HTTPInvoker real, final String token) {
         return new HTTPInvokerWithToken(
-            real instanceof HTTPInvokerWithToken ? ((HTTPInvokerWithToken) real).real : real,
-            token
+                real instanceof HTTPInvokerAdapter ? ((HTTPInvokerAdapter) real).real : real,
+                token
         );
     }
 
@@ -32,6 +32,39 @@ public interface HTTPInvoker {
      */
     static HTTPInvoker authenticated(final String token) {
         return new HTTPInvokerWithToken(HTTPInvokerFactory.getDefault(), token);
+    }
+
+    /**
+     * Constructs new HTTP invoker that will automatically establish session
+     * for given login and password and will reconnect when session is expired.
+     *
+     * @param real     HTTP invoker to wrap with feature.
+     * @param login    Wallet login.
+     * @param password Wallet password.
+     * @return HTTP invoker with bound session and credentials.
+     */
+    static HTTPInvoker auto(final HTTPInvoker real, final String login, final String password) {
+        return new HTTPInvokerWithSessionAndLoginPassword(
+                real instanceof HTTPInvokerAdapter ? ((HTTPInvokerAdapter) real).real : real,
+                login,
+                password
+        );
+    }
+
+    /**
+     * Constructs new HTTP invoker that will automatically establish session
+     * for given login and password and will reconnect when session is expired.
+     *
+     * @param login    Wallet login.
+     * @param password Wallet password.
+     * @return HTTP invoker with bound session and credentials.
+     */
+    static HTTPInvoker auto(final String login, final String password) {
+        return new HTTPInvokerWithSessionAndLoginPassword(
+                HTTPInvokerFactory.getDefault(),
+                login,
+                password
+        );
     }
 
     /**

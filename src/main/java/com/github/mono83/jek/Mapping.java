@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mono83.jek.exceptions.GeneralJekDeliveredException;
 import com.github.mono83.jek.exceptions.GeneralJekException;
 import com.github.mono83.jek.exceptions.delivered.BadCredentialsException;
+import com.github.mono83.jek.exceptions.delivered.BadSessionException;
 import com.github.mono83.jek.exceptions.delivered.TFAIsRequired;
 import lombok.NonNull;
 
@@ -38,6 +39,7 @@ class Mapping {
 
     static {
         errors = new HashMap<>();
+        errors.put(101, BadSessionException::new);
         errors.put(104, BadCredentialsException::new);
         errors.put(111, TFAIsRequired::new);
     }

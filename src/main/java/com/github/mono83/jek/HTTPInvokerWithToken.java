@@ -1,20 +1,23 @@
 package com.github.mono83.jek;
 
 import com.github.mono83.jek.exceptions.GeneralJekException;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 /**
  * HTTP invoker implementation, configured with some token.
  * This token will be always invoked in all outgoing invocations.
  */
-@RequiredArgsConstructor
-class HTTPInvokerWithToken implements HTTPInvoker {
-    @NonNull
-    final HTTPInvoker real;
+class HTTPInvokerWithToken extends HTTPInvokerAdapter {
     @NonNull
     private final String token;
+
+    HTTPInvokerWithToken(final HTTPInvoker real, @NonNull final String token) {
+        super(real);
+        if (token.isEmpty()) {
+            throw new IllegalArgumentException("Token is empty");
+        }
+        this.token = token;
+    }
 
     @Override
     public Response invoke(final String route, final byte[] payload) throws GeneralJekException {
