@@ -36,9 +36,17 @@ public final class Response {
         return Optional.of(new GeneralJekDeliveredException(code, rayId, errorMessage));
     }
 
+    public byte[] getPayload() {
+        if (errorMessage != null) {
+            throw Mapping.convert(new GeneralJekDeliveredException(code, rayId, errorMessage));
+        }
+
+        return payload;
+    }
+
     public <T> T get(@NonNull final Class<T> clazz) {
         try {
-            return Mapping.mapper.readValue(payload, clazz);
+            return Mapping.mapper.readValue(getPayload(), clazz);
         } catch (IOException e) {
             throw new ServerResponseUnmarshallingException(route, e);
         }
@@ -46,7 +54,7 @@ public final class Response {
 
     public <T> T get(@NonNull final TypeReference<T> reference) {
         try {
-            return Mapping.mapper.readValue(payload, reference);
+            return Mapping.mapper.readValue(getPayload(), reference);
         } catch (IOException e) {
             throw new ServerResponseUnmarshallingException(route, e);
         }
@@ -54,6 +62,16 @@ public final class Response {
 
     @Override
     public String toString() {
+        Optional<String> err = getErrorMessage();
+        if (err.isPresent()) {
+            return String.format(
+                    "Response(code=%d, rayId=%s, %s)",
+                    getCode(),
+                    getRayId(),
+                    err.get()
+            );
+        }
+
         return String.format(
                 "Response(code=%d, rayId=%s, %s bytes)",
                 getCode(),

@@ -1,6 +1,8 @@
 package com.github.mono83.jek;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.mono83.jek.exceptions.GeneralJekException;
+import com.github.mono83.jek.exceptions.RequestMarshallingException;
 
 /**
  * Defines components, responsible for simple HTTP communication.
@@ -16,8 +18,8 @@ public interface HTTPInvoker {
      */
     static HTTPInvoker authenticated(final HTTPInvoker real, final String token) {
         return new HTTPInvokerWithToken(
-                real instanceof HTTPInvokerWithToken ? ((HTTPInvokerWithToken) real).real : real,
-                token
+            real instanceof HTTPInvokerWithToken ? ((HTTPInvokerWithToken) real).real : real,
+            token
         );
     }
 
@@ -52,4 +54,37 @@ public interface HTTPInvoker {
      * @throws GeneralJekException on any error.
      */
     Response invoke(String route, final String token, byte[] payload) throws GeneralJekException;
+
+    /**
+     * Performs RPC call invocation using HTTP(s) transport.
+     *
+     * @param route   Route to invoke.
+     * @param payload Payload to send, optional.
+     * @return Response, delivered from server.
+     * @throws GeneralJekException on any error.
+     */
+    default Response invoke(String route, Object payload) throws GeneralJekException {
+        try {
+            return invoke(route, Mapping.mapper.writeValueAsBytes(payload));
+        } catch (JsonProcessingException e) {
+            throw new RequestMarshallingException(e);
+        }
+    }
+
+    /**
+     * Performs RPC call invocation using HTTP(s) transport with given session token.
+     *
+     * @param route   Route to invoke.
+     * @param token   Session token.
+     * @param payload Payload to send, optional.
+     * @return Response, delivered from server.
+     * @throws GeneralJekException on any error.
+     */
+    default Response invoke(String route, final String token, Object payload) throws GeneralJekException {
+        try {
+            return invoke(route, token, Mapping.mapper.writeValueAsBytes(payload));
+        } catch (JsonProcessingException e) {
+            throw new RequestMarshallingException(e);
+        }
+    }
 }

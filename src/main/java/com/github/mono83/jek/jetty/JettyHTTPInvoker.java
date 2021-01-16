@@ -5,7 +5,6 @@ import com.github.mono83.jek.Options;
 import com.github.mono83.jek.Response;
 import com.github.mono83.jek.exceptions.GeneralJekException;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -22,12 +21,27 @@ import java.util.concurrent.TimeoutException;
 /**
  * Jetty implementation of HTTP RPC invoker.
  */
-@RequiredArgsConstructor
 @Slf4j
 public class JettyHTTPInvoker implements HTTPInvoker {
     private final HttpClient client;
-    @NonNull
     private final String address;
+
+    /**
+     * Constructs new HTTP RPC invoker.
+     *
+     * @param client  Jetty HTTP client, optional.
+     * @param address Remote server address.
+     */
+    public JettyHTTPInvoker(final HttpClient client, @NonNull final String address) {
+        if (address.isEmpty()) {
+            throw new IllegalStateException("Empty address");
+        }
+
+        this.client = client;
+        this.address = address.endsWith("/")
+                ? address.substring(0, address.length() - 1)
+                : address;
+    }
 
     public static JettyHTTPInvoker create(final String address) {
         return new JettyHTTPInvoker(null, address);
@@ -66,6 +80,9 @@ public class JettyHTTPInvoker implements HTTPInvoker {
                 request.headers($ -> $.add(Options.HEADER_TOKEN, token));
             }
             if (payload != null && payload.length > 0) {
+                if (log.isTraceEnabled()) {
+                    log.trace(new String(payload, StandardCharsets.UTF_8));
+                }
                 request.body(new BytesRequestContent(payload));
             }
             ContentResponse res = request.send();
