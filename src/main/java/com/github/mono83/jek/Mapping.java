@@ -1,5 +1,6 @@
 package com.github.mono83.jek;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mono83.jek.exceptions.GeneralJekDeliveredException;
 import com.github.mono83.jek.exceptions.GeneralJekException;
@@ -20,7 +21,12 @@ class Mapping {
     private Mapping() {
     }
 
-    static final ObjectMapper mapper = new ObjectMapper();
+    static final ObjectMapper mapper;
+
+    static {
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     private static final Map<Integer, Function<GeneralJekDeliveredException, ? extends GeneralJekException>> errors;
 
