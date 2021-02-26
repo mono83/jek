@@ -2,6 +2,7 @@ package com.github.mono83.jek;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.mono83.jek.exceptions.GeneralJekDeliveredException;
+import com.github.mono83.jek.exceptions.GeneralJekException;
 import com.github.mono83.jek.exceptions.ServerResponseUnmarshallingException;
 import lombok.Data;
 import lombok.NonNull;
@@ -34,20 +35,21 @@ public final class Response {
     /**
      * @return Error, wrapped in exception. If present.
      */
-    public Optional<Exception> getError() {
+    public Optional<GeneralJekException> getError() {
         if (code == 0) {
             return Optional.empty();
         }
 
-        return Optional.of(new GeneralJekDeliveredException(code, rayId, errorMessage));
+        return Optional.of(new GeneralJekDeliveredException(code, rayId, errorMessage)).map(Mapping::convert);
     }
 
     /**
      * @return Response payload.
      */
     public byte[] getPayload() {
-        if (errorMessage != null) {
-            throw Mapping.convert(new GeneralJekDeliveredException(code, rayId, errorMessage));
+        Optional<GeneralJekException> optionalError = getError();
+        if (optionalError.isPresent()) {
+            throw optionalError.get();
         }
 
         return payload;
