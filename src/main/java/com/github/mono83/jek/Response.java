@@ -24,10 +24,16 @@ public final class Response {
     @NonNull
     private final byte[] payload;
 
+    /**
+     * @return Error message, delivered from server. If present.
+     */
     public Optional<String> getErrorMessage() {
         return Optional.ofNullable(errorMessage);
     }
 
+    /**
+     * @return Error, wrapped in exception. If present.
+     */
     public Optional<Exception> getError() {
         if (code == 0) {
             return Optional.empty();
@@ -36,6 +42,9 @@ public final class Response {
         return Optional.of(new GeneralJekDeliveredException(code, rayId, errorMessage));
     }
 
+    /**
+     * @return Response payload.
+     */
     public byte[] getPayload() {
         if (errorMessage != null) {
             throw Mapping.convert(new GeneralJekDeliveredException(code, rayId, errorMessage));
@@ -44,6 +53,13 @@ public final class Response {
         return payload;
     }
 
+    /**
+     * Maps response into required type.
+     *
+     * @param clazz Expected class.
+     * @param <T>   Expected type.
+     * @return Instance of required type.
+     */
     public <T> T get(@NonNull final Class<T> clazz) {
         try {
             return Mapping.mapper.readValue(getPayload(), clazz);
@@ -52,6 +68,13 @@ public final class Response {
         }
     }
 
+    /**
+     * Maps response into required type.
+     *
+     * @param reference Type reference.
+     * @param <T>       Expected type.
+     * @return Instance of required type.
+     */
     public <T> T get(@NonNull final TypeReference<T> reference) {
         try {
             return Mapping.mapper.readValue(getPayload(), reference);
