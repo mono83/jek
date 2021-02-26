@@ -54,7 +54,14 @@ public class JettyHTTPInvoker implements HTTPInvoker {
     }
 
     @Override
-    public Response invoke(@NonNull final String route, final String token, final byte[] payload) {
+    public Response invoke(@NonNull final String candidate, final String token, final byte[] payload) {
+        if (candidate.isEmpty()) {
+            throw new GeneralJekException(new IllegalArgumentException("Empty route"));
+        }
+        String route = candidate.startsWith("/")
+                ? candidate.trim()
+                : "/" + candidate.trim();
+
         HttpClient client;
         if (this.client == null) {
             client = new HttpClient();
