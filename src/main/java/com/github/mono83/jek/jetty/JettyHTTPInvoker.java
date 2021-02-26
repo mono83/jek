@@ -95,8 +95,21 @@ public class JettyHTTPInvoker implements HTTPInvoker {
             }
             ContentResponse res = request.send();
             Duration elapsed = Duration.ofNanos(System.nanoTime() - nano);
+            int httpCode = res.getStatus();
+            int appCode = Optional.ofNullable(res.getHeaders().get(Options.HEADER_CODE))
+                    .map(Integer::parseInt)
+                    .orElse(-1);
+            String rayId = Optional.ofNullable(res.getHeaders()
+                    .get(Options.HEADER_RAY_ID))
+                    .orElse("none");
+            String errorMessage = Optional.ofNullable(res.getHeaders().get(Options.HEADER_MESSAGE))
+                    .filter($ -> !$.isEmpty())
+                    .orElse(null);
             if (log.isDebugEnabled()) {
-                log.debug("Request to {} done in {}", route, elapsed);
+                log.debug("Request to {} done with codes {} {} in {}", route, httpCode, appCode, elapsed);
+            }
+            if (errorMessage != null && log.isErrorEnabled()) {
+                log.info("Received error {}", errorMessage);
             }
             if (log.isTraceEnabled()) {
                 log.trace(new String(res.getContent(), StandardCharsets.UTF_8));
@@ -105,9 +118,9 @@ public class JettyHTTPInvoker implements HTTPInvoker {
             return new Response(
                     route,
                     elapsed,
-                    Optional.ofNullable(res.getHeaders().get(Options.HEADER_CODE)).map(Integer::parseInt).orElse(-1),
-                    Optional.ofNullable(res.getHeaders().get(Options.HEADER_RAY_ID)).orElse(""),
-                    Optional.ofNullable(res.getHeaders().get(Options.HEADER_MESSAGE)).filter($ -> !$.isEmpty()).orElse(null),
+                    appCode,
+                    rayId,
+                    errorMessage,
                     res.getContent()
             );
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
