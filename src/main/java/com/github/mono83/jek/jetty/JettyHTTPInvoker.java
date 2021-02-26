@@ -15,6 +15,7 @@ import org.eclipse.jetty.http.HttpHeader;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -97,9 +98,9 @@ public class JettyHTTPInvoker implements HTTPInvoker {
             return new Response(
                     route,
                     elapsed,
-                    Integer.parseInt(res.getHeaders().get(Options.HEADER_CODE)),
-                    res.getHeaders().get(Options.HEADER_RAY_ID),
-                    res.getHeaders().get(Options.HEADER_MESSAGE),
+                    Optional.ofNullable(res.getHeaders().get(Options.HEADER_CODE)).map(Integer::parseInt).orElse(-1),
+                    Optional.ofNullable(res.getHeaders().get(Options.HEADER_RAY_ID)).orElse(""),
+                    Optional.ofNullable(res.getHeaders().get(Options.HEADER_MESSAGE)).filter($ -> !$.isEmpty()).orElse(null),
                     res.getContent()
             );
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
