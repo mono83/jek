@@ -1,8 +1,8 @@
 package com.github.mono83.jek.jetty;
 
-import com.github.mono83.jek.Transport;
 import com.github.mono83.jek.Options;
 import com.github.mono83.jek.Response;
+import com.github.mono83.jek.Transport;
 import com.github.mono83.jek.exceptions.GeneralJekException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -128,6 +128,11 @@ public class JettyTransport implements Transport {
                 log.error("Error sending request", e);
             }
             throw new GeneralJekException(e);
+        } catch (Exception e) {
+            if (log.isInfoEnabled()) {
+                log.error("Unexpected error", e);
+            }
+            throw e;
         } finally {
             try {
                 if (this.client == null) {
