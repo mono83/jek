@@ -17,7 +17,7 @@ public class GetStatus implements RPCCallTyped<StatusDTO> {
         return reference;
     }
 
-    public Response call(@NonNull final Transport invoker) {
-        return invoker.invoke(Options.ROUTE_STATUS, null);
+    public Response call(@NonNull final Transport transport) {
+        return transport.invoke(Options.ROUTE_STATUS, null);
     }
 }

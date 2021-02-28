@@ -23,8 +23,8 @@ public class AuthWallet implements RPCCallTyped<String> {
     }
 
     @Override
-    public Response call(@NonNull final Transport invoker) throws GeneralJekException {
-        return invoker.invoke(Options.ROUTE_AUTH_WALLET, new Credentials(login, password));
+    public Response call(@NonNull final Transport transport) throws GeneralJekException {
+        return transport.invoke(Options.ROUTE_AUTH_WALLET, new Credentials(login, password));
     }
 
     @RequiredArgsConstructor
