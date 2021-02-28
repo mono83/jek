@@ -106,7 +106,7 @@ public class JettyTransport implements Transport {
                     .filter($ -> !$.isEmpty())
                     .orElse(null);
             if (log.isInfoEnabled(marker)) {
-                log.info(marker, "Request to {} done with codes {} {} in {}", route, httpCode, appCode, elapsed);
+                log.info(marker, "Request to {} done with codes {} {} {} in {}", route, rayId, httpCode, appCode, elapsed);
             }
             if (errorMessage != null && log.isErrorEnabled(marker)) {
                 log.info(marker, "Received error {}", errorMessage);
