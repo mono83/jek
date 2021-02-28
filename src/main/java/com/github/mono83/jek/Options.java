@@ -15,6 +15,7 @@ public class Options {
     public static final String ROUTE_STATUS = "/api/public/status";
 
     // Not protected routes
+    public static final String WHO_AM_I = "/api/whoami";
     public static final String ROUTE_AUTH_WALLET = "/api/wallet/auth";
 
     private Options() {
