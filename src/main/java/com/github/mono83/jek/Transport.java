@@ -3,11 +3,18 @@ package com.github.mono83.jek;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.mono83.jek.exceptions.GeneralJekException;
 import com.github.mono83.jek.exceptions.RequestMarshallingException;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * Defines components, responsible for simple HTTP communication.
  */
 public interface Transport {
+    /**
+     * Marker for logs, emitted by transport.
+     */
+    Marker marker = MarkerFactory.getMarker("jek");
+
     /**
      * Constructs new HTTP invoker that will contain given token and apply it
      * to all outgoing RPC calls.

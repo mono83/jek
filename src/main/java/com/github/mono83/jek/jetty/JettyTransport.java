@@ -69,8 +69,8 @@ public class JettyTransport implements Transport {
             try {
                 client.start();
             } catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Error starting Jetty HTTP client", e);
+                if (log.isErrorEnabled(marker)) {
+                    log.error(marker, "Error starting Jetty HTTP client", e);
                 }
                 throw new GeneralJekException("Unable to start Jetty HTTP client", e);
             }
@@ -79,8 +79,8 @@ public class JettyTransport implements Transport {
         }
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Sending request to {}", route);
+            if (log.isInfoEnabled(marker)) {
+                log.info(marker, "Sending request to {}", route);
             }
             long nano = System.nanoTime();
             Request request = client.POST(address + route);
@@ -88,8 +88,8 @@ public class JettyTransport implements Transport {
                 request.headers($ -> $.add(Options.HEADER_TOKEN, token));
             }
             if (payload != null && payload.length > 0) {
-                if (log.isTraceEnabled()) {
-                    log.trace(new String(payload, StandardCharsets.UTF_8));
+                if (log.isTraceEnabled(marker)) {
+                    log.trace(marker, new String(payload, StandardCharsets.UTF_8));
                 }
                 request.body(new BytesRequestContent(payload));
             }
@@ -105,14 +105,17 @@ public class JettyTransport implements Transport {
             String errorMessage = Optional.ofNullable(res.getHeaders().get(Options.HEADER_MESSAGE))
                     .filter($ -> !$.isEmpty())
                     .orElse(null);
-            if (log.isDebugEnabled()) {
-                log.debug("Request to {} done with codes {} {} in {}", route, httpCode, appCode, elapsed);
+            if (log.isInfoEnabled(marker)) {
+                log.info(marker, "Request to {} done with codes {} {} in {}", route, httpCode, appCode, elapsed);
             }
-            if (errorMessage != null && log.isErrorEnabled()) {
-                log.info("Received error {}", errorMessage);
+            if (errorMessage != null && log.isErrorEnabled(marker)) {
+                log.info(marker, "Received error {}", errorMessage);
             }
-            if (log.isTraceEnabled()) {
-                log.trace(new String(res.getContent(), StandardCharsets.UTF_8));
+            if (appCode == -1 && log.isErrorEnabled(marker)) {
+                log.error(marker, "Unexpected application response code");
+            }
+            if (log.isTraceEnabled(marker)) {
+                log.trace(marker, new String(res.getContent(), StandardCharsets.UTF_8));
             }
 
             return new Response(
@@ -124,13 +127,13 @@ public class JettyTransport implements Transport {
                     res.getContent()
             );
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Error sending request", e);
+            if (log.isErrorEnabled(marker)) {
+                log.error(marker, "Error sending request", e);
             }
             throw new GeneralJekException(e);
         } catch (Exception e) {
-            if (log.isInfoEnabled()) {
-                log.error("Unexpected error", e);
+            if (log.isInfoEnabled(marker)) {
+                log.error(marker, "Unexpected error", e);
             }
             throw e;
         } finally {
@@ -139,8 +142,8 @@ public class JettyTransport implements Transport {
                     client.stop();
                 }
             } catch (Exception e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Error stopping Jetty HTTP client", e);
+                if (log.isErrorEnabled(marker)) {
+                    log.error(marker, "Error stopping Jetty HTTP client", e);
                 }
                 // Suppressing
             }
