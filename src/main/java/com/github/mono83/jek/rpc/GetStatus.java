@@ -1,7 +1,7 @@
 package com.github.mono83.jek.rpc;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.mono83.jek.HTTPInvoker;
+import com.github.mono83.jek.Transport;
 import com.github.mono83.jek.Options;
 import com.github.mono83.jek.RPCCallTyped;
 import com.github.mono83.jek.Response;
@@ -17,7 +17,7 @@ public class GetStatus implements RPCCallTyped<StatusDTO> {
         return reference;
     }
 
-    public Response call(@NonNull final HTTPInvoker invoker) {
+    public Response call(@NonNull final Transport invoker) {
         return invoker.invoke(Options.ROUTE_STATUS, null);
     }
 }

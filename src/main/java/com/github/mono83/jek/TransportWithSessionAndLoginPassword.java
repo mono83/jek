@@ -10,7 +10,7 @@ import lombok.NonNull;
  * HTTP invoker implementation that will attempt to create and maintain
  * authenticated session.
  */
-class HTTPInvokerWithSessionAndLoginPassword extends HTTPInvokerAdapter {
+class TransportWithSessionAndLoginPassword extends TransportAdapter {
     private final Object lock = new Object();
 
     private final String login;
@@ -19,8 +19,8 @@ class HTTPInvokerWithSessionAndLoginPassword extends HTTPInvokerAdapter {
     private volatile String token = null;
     private volatile boolean failed = false;
 
-    HTTPInvokerWithSessionAndLoginPassword(
-            final HTTPInvoker real,
+    TransportWithSessionAndLoginPassword(
+            final Transport real,
             @NonNull final String login,
             @NonNull final String password
     ) {

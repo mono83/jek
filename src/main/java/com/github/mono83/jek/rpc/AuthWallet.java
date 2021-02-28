@@ -2,7 +2,7 @@ package com.github.mono83.jek.rpc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.mono83.jek.HTTPInvoker;
+import com.github.mono83.jek.Transport;
 import com.github.mono83.jek.Options;
 import com.github.mono83.jek.RPCCallTyped;
 import com.github.mono83.jek.Response;
@@ -23,7 +23,7 @@ public class AuthWallet implements RPCCallTyped<String> {
     }
 
     @Override
-    public Response call(@NonNull final HTTPInvoker invoker) throws GeneralJekException {
+    public Response call(@NonNull final Transport invoker) throws GeneralJekException {
         return invoker.invoke(Options.ROUTE_AUTH_WALLET, new Credentials(login, password));
     }
 

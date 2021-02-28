@@ -1,6 +1,6 @@
 package com.github.mono83.jek.jetty;
 
-import com.github.mono83.jek.HTTPInvoker;
+import com.github.mono83.jek.Transport;
 import com.github.mono83.jek.Options;
 import com.github.mono83.jek.Response;
 import com.github.mono83.jek.exceptions.GeneralJekException;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
  * Jetty implementation of HTTP RPC invoker.
  */
 @Slf4j
-public class JettyHTTPInvoker implements HTTPInvoker {
+public class JettyTransport implements Transport {
     private final HttpClient client;
     private final String address;
 
@@ -33,7 +33,7 @@ public class JettyHTTPInvoker implements HTTPInvoker {
      * @param client  Jetty HTTP client, optional.
      * @param address Remote server address.
      */
-    public JettyHTTPInvoker(final HttpClient client, @NonNull final String address) {
+    public JettyTransport(final HttpClient client, @NonNull final String address) {
         if (address.isEmpty()) {
             throw new IllegalStateException("Empty address");
         }
@@ -44,8 +44,8 @@ public class JettyHTTPInvoker implements HTTPInvoker {
                 : address;
     }
 
-    public static JettyHTTPInvoker create(final String address) {
-        return new JettyHTTPInvoker(null, address);
+    public static JettyTransport create(final String address) {
+        return new JettyTransport(null, address);
     }
 
     @Override

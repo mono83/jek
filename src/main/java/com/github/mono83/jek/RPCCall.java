@@ -13,16 +13,16 @@ public interface RPCCall {
      * @return Server response.
      * @throws GeneralJekException On any error.
      */
-    Response call(HTTPInvoker invoker) throws GeneralJekException;
+    Response call(Transport invoker) throws GeneralJekException;
 
     /**
      * Performs RPC call using default HTTP invoker.
-     * Default invoker must be configured in {@link HTTPInvokerFactory}
+     * Default invoker must be configured in {@link TransportFactory}
      *
      * @return Server response.
      * @throws GeneralJekException On any error.
      */
     default Response call() {
-        return call(HTTPInvokerFactory.getDefault());
+        return call(TransportFactory.getDefault());
     }
 }

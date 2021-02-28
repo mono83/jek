@@ -22,13 +22,13 @@ public interface RPCCallTyped<T> extends RPCCall {
      * @return Server response.
      * @throws GeneralJekException On any error.
      */
-    default T get(HTTPInvoker invoker) throws GeneralJekException {
+    default T get(Transport invoker) throws GeneralJekException {
         return call(invoker).get(getTypeReference());
     }
 
     /**
      * Performs RPC call using default HTTP invoker.
-     * Default invoker must be configured in {@link HTTPInvokerFactory}
+     * Default invoker must be configured in {@link TransportFactory}
      *
      * @return Server response.
      * @throws GeneralJekException On any error.

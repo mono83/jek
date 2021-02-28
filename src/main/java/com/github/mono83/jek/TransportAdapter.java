@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-abstract class HTTPInvokerAdapter implements HTTPInvoker {
+abstract class TransportAdapter implements Transport {
     @NonNull
-    protected final HTTPInvoker real;
+    protected final Transport real;
 }

@@ -7,7 +7,7 @@ import com.github.mono83.jek.exceptions.RequestMarshallingException;
 /**
  * Defines components, responsible for simple HTTP communication.
  */
-public interface HTTPInvoker {
+public interface Transport {
     /**
      * Constructs new HTTP invoker that will contain given token and apply it
      * to all outgoing RPC calls.
@@ -16,9 +16,9 @@ public interface HTTPInvoker {
      * @param token Token to bind.
      * @return HTTP invoker with bound token.
      */
-    static HTTPInvoker authenticated(final HTTPInvoker real, final String token) {
-        return new HTTPInvokerWithToken(
-                real instanceof HTTPInvokerAdapter ? ((HTTPInvokerAdapter) real).real : real,
+    static Transport authenticated(final Transport real, final String token) {
+        return new TransportWithToken(
+                real instanceof TransportAdapter ? ((TransportAdapter) real).real : real,
                 token
         );
     }
@@ -30,8 +30,8 @@ public interface HTTPInvoker {
      * @param token Token to bind.
      * @return HTTP invoker with bound token.
      */
-    static HTTPInvoker authenticated(final String token) {
-        return new HTTPInvokerWithToken(HTTPInvokerFactory.getDefault(), token);
+    static Transport authenticated(final String token) {
+        return new TransportWithToken(TransportFactory.getDefault(), token);
     }
 
     /**
@@ -43,9 +43,9 @@ public interface HTTPInvoker {
      * @param password Wallet password.
      * @return HTTP invoker with bound session and credentials.
      */
-    static HTTPInvoker auto(final HTTPInvoker real, final String login, final String password) {
-        return new HTTPInvokerWithSessionAndLoginPassword(
-                real instanceof HTTPInvokerAdapter ? ((HTTPInvokerAdapter) real).real : real,
+    static Transport auto(final Transport real, final String login, final String password) {
+        return new TransportWithSessionAndLoginPassword(
+                real instanceof TransportAdapter ? ((TransportAdapter) real).real : real,
                 login,
                 password
         );
@@ -59,9 +59,9 @@ public interface HTTPInvoker {
      * @param password Wallet password.
      * @return HTTP invoker with bound session and credentials.
      */
-    static HTTPInvoker auto(final String login, final String password) {
-        return new HTTPInvokerWithSessionAndLoginPassword(
-                HTTPInvokerFactory.getDefault(),
+    static Transport auto(final String login, final String password) {
+        return new TransportWithSessionAndLoginPassword(
+                TransportFactory.getDefault(),
                 login,
                 password
         );
